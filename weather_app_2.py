@@ -445,17 +445,23 @@ from contextlib import asynccontextmanager
 # Shared async HTTP client
 _client: httpx.AsyncClient | None = None
 
+def get_client() -> httpx.AsyncClient:
+    global _client
+    if _client is None or _client.is_closed:
+        _client = httpx.AsyncClient(
+            timeout=10,
+            headers={"User-Agent": "SkyCheck/1.0 (weather app)"},
+            follow_redirects=True,
+        )
+    return _client
+
 @asynccontextmanager
 async def lifespan(application: FastAPI):
-    """Create and cleanly close the shared HTTP client."""
-    global _client
-    _client = httpx.AsyncClient(
-        timeout=10,
-        headers={"User-Agent": "SkyCheck/1.0 (weather app)"},
-        follow_redirects=True,
-    )
+    """Cleanly close the shared HTTP client on shutdown if it was initialized."""
     yield
-    await _client.aclose()
+    global _client
+    if _client is not None and not _client.is_closed:
+        await _client.aclose()
 
 app = FastAPI(title="SkyCheck", docs_url=None, redoc_url=None, lifespan=lifespan)
 
@@ -508,7 +514,8 @@ async def get_weather(city: str = Query(..., min_length=1)):
 
     # Step 1: Geocode
     try:
-        geo = await _client.get(GEO_URL, params={"name": city, "count": 1, "language": "en"})
+        client = get_client()
+        geo = await client.get(GEO_URL, params={"name": city, "count": 1, "language": "en"})
         geo.raise_for_status()
         geo_data = geo.json()
     except httpx.TimeoutException:
@@ -532,7 +539,8 @@ async def get_weather(city: str = Query(..., min_length=1)):
 
     # Step 2: Weather
     try:
-        wx = await _client.get(WEATHER_URL, params={
+        client = get_client()
+        wx = await client.get(WEATHER_URL, params={
             "latitude":        lat,
             "longitude":       lon,
             "current_weather": "true",
@@ -585,6 +593,12 @@ async def get_weather(city: str = Query(..., min_length=1)):
 if __name__ == "__main__":
     PORT = 8000
     URL  = f"http://localhost:{PORT}"
+
+    # Ensure terminal supports UTF-8 characters on Windows
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+    except Exception:
+        pass
 
     print(f"""
 ╔══════════════════════════════════════════════╗
