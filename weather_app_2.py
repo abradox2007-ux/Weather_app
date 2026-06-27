@@ -591,7 +591,7 @@ async def get_weather(city: str = Query(..., min_length=1)):
 # ════════════════════════════════════════════════════════════════════════════
 
 if __name__ == "__main__":
-    PORT = 8000
+    PORT = 8082
     URL  = f"http://localhost:{PORT}"
 
     # Ensure terminal supports UTF-8 characters on Windows
