@@ -73,15 +73,85 @@ body{
 #home-bg-video{
   width:100%;height:100%;object-fit:cover;
   filter:brightness(0.85) contrast(1.05);
-  transition:opacity 1s ease-in-out;opacity:0.85;
+  transition:opacity 1s ease-in-out, filter 1s ease-in-out;opacity:0.85;
 }
 .home-bg-overlay{
   position:absolute;inset:0;
   background:radial-gradient(circle at 50% 30%, rgba(4,7,13,0.15), rgba(4,7,13,0.65) 80%),
              linear-gradient(to bottom, rgba(4,7,13,0.3), rgba(4,7,13,0.75));
+  transition:background 1s ease-in-out;
+}
+.home-bg-video-wrap.night-active #home-bg-video{
+  filter:brightness(1.35) contrast(1.15) saturate(1.2);
+  opacity:0.95;
+}
+.home-bg-video-wrap.night-active .home-bg-overlay{
+  background:radial-gradient(circle at 50% 30%, rgba(4,7,13,0.05), rgba(4,7,13,0.4) 80%),
+             linear-gradient(to bottom, rgba(4,7,13,0.15), rgba(4,7,13,0.5));
 }
 
-.page{position:relative;z-index:2;width:100%;max-width:520px;display:flex;flex-direction:column;align-items:center}
+/* ── APP LAYOUT ─── */
+.app-layout{
+  position:relative;z-index:2;
+  width:100%;max-width:1320px;
+  display:flex;flex-direction:row;
+  align-items:flex-start;justify-content:space-between;
+  gap:2.5rem;padding:0 1rem;
+}
+.page{position:relative;flex:1;width:100%;max-width:680px;display:flex;flex-direction:column;align-items:center}
+
+/* ── MY FAVOURITE SPOTS BOX ─── */
+.spots-box{
+  width:100%;max-width:480px;
+  background:rgba(13,20,37,0.55);
+  backdrop-filter:blur(16px);
+  border:1px solid rgba(255,255,255,0.18);
+  border-radius:var(--r2);
+  padding:28px 24px;
+  box-shadow:var(--shadow);
+  position:sticky;top:2.5rem;
+  animation:fadeIn .6s ease-out;
+}
+.spots-header{
+  display:flex;align-items:center;gap:12px;
+  margin-bottom:20px;padding-bottom:14px;
+  border-bottom:1px solid var(--border);
+}
+.spots-header h2{
+  font-size:1.3rem;font-weight:700;color:var(--text);
+  letter-spacing:-0.01em;
+}
+.spots-header-icon{font-size:1.5rem}
+.spots-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);
+  gap:12px;
+}
+.spot-btn{
+  background:rgba(255,255,255,0.06);
+  border:1px solid var(--border2);
+  border-radius:var(--r);
+  color:var(--text);
+  font-family:var(--font);
+  font-size:0.95rem;font-weight:600;
+  padding:12px 16px;
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:space-between;
+  transition:all .2s cubic-bezier(0.16,1,0.3,1);
+}
+.spot-btn:hover{
+  background:rgba(96,165,250,0.22);
+  border-color:var(--accent);
+  transform:translateY(-2px);
+  box-shadow:0 6px 20px rgba(96,165,250,0.3);
+}
+.spot-btn:active{transform:translateY(0)}
+.spot-arrow{font-size:0.85rem;color:var(--accent);opacity:0.6;transition:opacity .2s,transform .2s}
+.spot-btn:hover .spot-arrow{opacity:1;transform:translateX(4px)}
+
+@media(max-width:1024px){
+  .app-layout{flex-direction:column;align-items:center;justify-content:center}
+  .spots-box{max-width:680px;position:static}
+}
 
 /* ── Header ─── */
 header{text-align:center;margin-bottom:1.5rem}
@@ -374,6 +444,7 @@ footer a:hover{color:var(--accent)}
   <div class="home-bg-overlay"></div>
 </div>
 
+<div class="app-layout">
 <div class="page">
 
 <header>
@@ -584,6 +655,60 @@ footer a:hover{color:var(--accent)}
 
 </div><!-- .page -->
 
+<!-- MY FAVOURITE SPOTS BOX -->
+<div class="spots-box">
+  <div class="spots-header">
+    <span class="spots-header-icon">⭐</span>
+    <h2>My Favourite Spots</h2>
+  </div>
+  <div class="spots-grid">
+    <button class="spot-btn" data-spot="Chennai" data-query="Chennai">
+      <span>🇮🇳 Chennai</span><span class="spot-arrow">→</span>
+    </button>
+    <button class="spot-btn" data-spot="Mumbai" data-query="Mumbai">
+      <span>🇮🇳 Mumbai</span><span class="spot-arrow">→</span>
+    </button>
+    <button class="spot-btn" data-spot="Delhi" data-query="Delhi">
+      <span>🇮🇳 Delhi</span><span class="spot-arrow">→</span>
+    </button>
+    <button class="spot-btn" data-spot="Kolkatta" data-query="Kolkata">
+      <span>🇮🇳 Kolkatta</span><span class="spot-arrow">→</span>
+    </button>
+    <button class="spot-btn" data-spot="Tokyo" data-query="Tokyo">
+      <span>🇯🇵 Tokyo</span><span class="spot-arrow">→</span>
+    </button>
+    <button class="spot-btn" data-spot="Shibuya" data-query="Shibuya">
+      <span>🇯🇵 Shibuya</span><span class="spot-arrow">→</span>
+    </button>
+    <button class="spot-btn" data-spot="New York" data-query="New York">
+      <span>🇺🇸 New York</span><span class="spot-arrow">→</span>
+    </button>
+    <button class="spot-btn" data-spot="London" data-query="London">
+      <span>🇬🇧 London</span><span class="spot-arrow">→</span>
+    </button>
+    <button class="spot-btn" data-spot="Denmark" data-query="Denmark">
+      <span>🇩🇰 Denmark</span><span class="spot-arrow">→</span>
+    </button>
+    <button class="spot-btn" data-spot="Los Angeles" data-query="Los Angeles">
+      <span>🇺🇸 Los Angeles</span><span class="spot-arrow">→</span>
+    </button>
+    <button class="spot-btn" data-spot="Los Vegas" data-query="Las Vegas">
+      <span>🇺🇸 Los Vegas</span><span class="spot-arrow">→</span>
+    </button>
+    <button class="spot-btn" data-spot="Paris" data-query="Paris">
+      <span>🇫🇷 Paris</span><span class="spot-arrow">→</span>
+    </button>
+    <button class="spot-btn" data-spot="Mexico" data-query="Mexico City">
+      <span>🇲🇽 Mexico</span><span class="spot-arrow">→</span>
+    </button>
+    <button class="spot-btn" data-spot="Chicago" data-query="Chicago">
+      <span>🇺🇸 Chicago</span><span class="spot-arrow">→</span>
+    </button>
+  </div>
+</div>
+
+</div><!-- .app-layout -->
+
 <script>
 // ── DOM References ────────────────────────────────────────────────
 const $=id=>document.getElementById(id);
@@ -659,14 +784,24 @@ function updatePageBackgroundVideo(code, isDay) {
   else key = 'sunny';
 
   const targetSrc = LOCAL_VIDEOS[key];
+  const wrap = document.querySelector('.home-bg-video-wrap');
+  if (wrap) {
+    if (key === 'night') {
+      wrap.classList.add('night-active');
+    } else {
+      wrap.classList.remove('night-active');
+    }
+  }
   
   if (homeVideo && !homeVideo.src.endsWith(targetSrc)) {
     homeVideo.style.opacity = '0.3';
     setTimeout(() => {
       homeVideo.src = targetSrc;
       homeVideo.play().catch(()=>{});
-      homeVideo.style.opacity = '0.85';
+      homeVideo.style.opacity = (key === 'night') ? '0.95' : '0.85';
     }, 300);
+  } else if (homeVideo) {
+    homeVideo.style.opacity = (key === 'night') ? '0.95' : '0.85';
   }
 }
 
@@ -743,7 +878,21 @@ function populateHeroReport(d) {
   tickClocks();
 }
 
-window.addEventListener('DOMContentLoaded', initHeroReport);
+window.addEventListener('DOMContentLoaded', () => {
+  initHeroReport();
+  document.querySelectorAll('.spot-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const spotName = btn.getAttribute('data-spot');
+      const queryName = btn.getAttribute('data-query');
+      input.value = spotName;
+      fetchWeather(queryName);
+      if (window.innerWidth <= 880) {
+        const card = $('weather-card');
+        if (card) card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    });
+  });
+});
 
 
 // ── Autocomplete ─────────────────────────────────────────────────
